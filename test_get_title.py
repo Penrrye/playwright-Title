@@ -12,4 +12,9 @@ def test_get_title(page: Page):
     get_started = page.get_by_role("link", name="Get Started")
     get_started.click()
 
+def test_validate_url(page: Page):
+    page.goto("https://playwright.dev/")
+    expect(page).to_have_url("https://playwright.dev/")
+
+
 
