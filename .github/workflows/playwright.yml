@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Playwright Tests + Allure
 
 on:
   push:
@@ -12,7 +12,8 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repo
+        uses: actions/checkout@v5
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -23,26 +24,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install allure-pytest
 
       - name: Install Playwright browsers
         run: python -m playwright install --with-deps
 
-      - name: Run tests with Allure
+      - name: Run tests with Allure results
         run: pytest --alluredir=allure-results
 
+      # ✅ INSTALL ALLURE CLI (estable en CI)
       - name: Install Allure CLI
         run: |
           sudo apt-get update
           sudo apt-get install -y default-jre
-          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/latest/download/allure-2.25.0.tgz
-          tar -xzf allure.tgz
-          sudo mv allure-2.25.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          sudo npm install -g allure-commandline
 
+      # 📊 Generate report
       - name: Generate Allure report
         run: allure generate allure-results -o allure-report --clean
 
-      - name: Upload Allure report
+      # 📦 Upload report
+      - name: Upload Allure Report Artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
